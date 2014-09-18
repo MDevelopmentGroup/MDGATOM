@@ -1,0 +1,1065 @@
+ ;MDG.Request.1
+ ;(C)InterSystems, generated for class MDG.Request.  Do NOT edit. 09/17/2014 08:41:51PM
+ ;;7670737A;MDG.Request
+ ;
+SQLUPPER(v,l) { quit $zu(28,v,7,$g(l,32767)) }
+ALPHAUP(v,r) { quit $zu(28,v,6) }
+STRING(v,l) { quit $zu(28,v,9,$g(l,32767)) }
+SQLSTRING(v,l) { quit $zu(28,v,8,$g(l,32767)) }
+UPPER(v) { quit $zu(28,v,5) }
+MVR(v) { quit $zu(28,v,2) }
+TRUNCATE(v,l) { quit $e(v,1,$g(l,3641144)) }
+ /*  ; Revision: $Id: //dev/2014.2.x/databases/sys/inc/_sySystem.inc#1 $ ($Change: 1637798 $)  */
+%BuildIndices(pIndexList="",pAutoPurge=0,pLockFlag=0,pJournalFlag=0,pStartID="",pEndID="") public {
+	if $ll(pIndexList) { quit $$Error^%apiOBJ(5066,$classname()_"::"_$ListToString(pIndexList)) } QUIT 1 }
+%BuildIndicesSegment(pStartID,pEndID,pIndexHandle=0,pLockFlag=1) public {
+	QUIT 1 }
+%CheckConstraints(pID,pConstraintList="",pCheckDisabled=0,pErrorInfo) public {
+	if (''..%OnDetermineClass($select(pID="":"",1:$listbuild(pID_"")),.tMSTC)) && (tMSTC '= $classname()) { quit $classmethod(tMSTC,"%CheckConstraints",pID,pConstraintList) } else { quit 1 } }
+%CheckConstraintsForExtent(pConstraintList="",pCheckDisabled=0,pErrorLog) [ SQLCODE,tID ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,tID 
+	kill pErrorLog set tStatusAll = 1, pErrorLog = 0 if '$listvalid(pConstraintList) { set pConstraintList = $listfromstring(pConstraintList) }
+	 ;---&sql(declare ext cursor for select %ID into :tID FROM MDG.Request)
+ 	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE, tID
+	
+	 ;---&sql(open ext)
+ 	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
+	Do %ext0o
+	if SQLCODE '< 0 {
+		for {
+			 ;---&sql(fetch ext)
+ 			 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
+			Do %0Do
+			if SQLCODE { if SQLCODE=100 { quit } elseif SQLCODE<0 { set tStatusAll = $select(+tStatusAll:$$Error^%apiOBJ(5521,SQLCODE,$Get(%msg)),1:$$AppendStatus^%occSystem(tStatusAll,$$Error^%apiOBJ(5521,SQLCODE,$Get(%msg)))) quit } }
+			set tStatus = ..%CheckConstraints(tID,pConstraintList,pCheckDisabled,.tErrorInfo)
+			if ('tStatus) { set tStatusAll = $select(+tStatusAll:tStatus,1:$$AppendStatus^%occSystem(tStatusAll,tStatus)) set:pErrorLog<1000 pErrorLog = pErrorLog + 1, pErrorLog(pErrorLog) = tErrorInfo _ $Listbuild(tStatus) }
+		}
+		 ;---&sql(close ext)
+ 		 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
+		Do %ext0c
+	}
+	quit tStatusAll }
+ q
+%ext0o 
+ s $zt="%ext0E" s SQLCODE=$s($g(%ext01273c):-101,1:0) q:SQLCODE'=0  s %ext01273d(1)=0 set:$d(%0CacheRowLimit)#2 %ext01273d(2)=%0CacheRowLimit s %ext01273d(3)=0,%ext01273d(4)="" d:$zu(115,15) $system.ECP.Sync()
+ s %ext01273d(5)=$S($zu(115,12)=-1:0,$zu(115,12)>0:$zu(115,12),1:$zu(35,4))
+ if %ext01273d(5)>1 { 
+      new StatsParams set StatsParams=0
+      do ##class(%SYS.PTools.SQLStats).Init("MDGDEV",$zn,"ext0",.StatsParams)
+  }
+ s %ext01273c=1,SQLCODE=0 q
+%ext0E s $zt="" d SQLRunTimeError^%apiSQL($ze,.SQLCODE,.%msg) k %ext01273c,%ext01273d,%ext01273E,%ext01273l,%ext01273n,%ext01273R,%ext01273Z,%mmmsqlEOO q
+%0Afirst 
+ ; asl MOD# 2
+ d:%ext01273d(5)=3 ##class(%SYS.PTools.SQLStats).Start("MDGDEV",$zn,"ext0",2)
+ s tID=""
+%0AmBk1 s tID=$o(^MDG.RequestD(tID),1)
+ i tID="" g %0AmBdun
+ goto:$zu(115,2)=0 %0AmBuncommitted
+ if $zu(115,2)=1 {
+ 	lock +^MDG.RequestD($p(tID,"||",1))#"S":$zu(115,4)
+ 	if $t { set %ext01273d(4)=$name(^MDG.RequestD($p(tID,"||",1)))_"#""SI""",%ext01273d(3)=1 }
+ 	else { s SQLCODE=-114,%msg="Unable to acquire shared lock on table MDG.Request for RowID value: "_tID ztrap "LOCK"  }
+ }
+ ; asl MOD# 3
+ d:%ext01273d(5)=3 ##class(%SYS.PTools.SQLStats).Start("MDGDEV",$zn,"ext0",3)
+ i tID'="",$d(^MDG.RequestD(tID))
+ e  g %0AmCdun
+%0AmBuncommitted ;
+ d:%ext01273d(5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"ext0","3,2,1")
+ s:$g(SQLCODE)'<0 SQLCODE=0 s %ext01273d(1)=%ext01273d(1)+1,%ROWCOUNT=%ext01273d(1),%ROWID=tID,%ext01273c=10 q
+%ext0f i '$g(%ext01273c) { s SQLCODE=-102 q  } i %ext01273c=100 { s SQLCODE=100 q  } s SQLCODE=0
+ s $zt="%0Aerr"
+ i $d(%ext01273d(2))#2,$g(%ext01273d(1))'<%ext01273d(2) { s SQLCODE=100,%ROWCOUNT=%ext01273d(1),%ext01273c=100 q }
+ g %0Afirst:%ext01273c=1
+ d:%ext01273d(5)=3 ##class(%SYS.PTools.SQLStats).Start("MDGDEV",$zn,"ext0","3,2,1")
+%0AmCdun if $zu(115,2)=1 { if $g(%ext01273d(3))=1 { l -@%ext01273d(4) s %ext01273d(3)=0 } elseif $g(%ext01273d(3))=2 { do $classmethod($li(%ext01273d(4)),"%UnlockId",$li(%ext01273d(4),2),1,1)  s %ext01273d(3)=0 } }
+ d:%ext01273d(5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"ext0",3)
+ g %0AmBk1
+%0AmBdun d:%ext01273d(5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"ext0",2)
+%0AmAdun 
+ s %ROWCOUNT=%ext01273d(1),SQLCODE=100,%ext01273c=100 q
+%ext0c i '$g(%ext01273c) { s SQLCODE=-102 q  }
+ s %ROWCOUNT=$s($g(SQLCODE)'<0:+$g(%ext01273d(1)),1:0)
+ d:$g(%ext01273d(5))>1 ##class(%SYS.PTools.SQLStats).Report("MDGDEV",$zn,"ext0",%ROWCOUNT)
+ if $zu(115,2)=1 { if $g(%ext01273d(3))=1 { l -@%ext01273d(4) } elseif $g(%ext01273d(3))=2 { do $classmethod($li(%ext01273d(4)),"%UnlockId",$li(%ext01273d(4),2),1,1)  } }
+ k %ext01273c,%ext01273d,%ext01273E,%ext01273l,%ext01273n,%ext01273R,%ext01273Z,%mmmsqlEOO s SQLCODE=0 q
+%0Aerr s $zt="" d SQLRunTimeError^%apiSQL($ze,.SQLCODE,.%msg)
+ s %ext01273c=100 q
+%0Do d %ext0f q:SQLCODE'=0
+ q
+%ComposeOid(id) public {
+	set tCLASSNAME = $listget($g(^MDG.RequestD(id)),1)
+	if tCLASSNAME="" { quit $select(id="":"",1:$listbuild(id_"","MDG.Request")) }
+	set tClass=$piece(tCLASSNAME,$extract(tCLASSNAME),*-1)
+	set:tClass'["." tClass="User."_tClass
+	quit $select(id="":"",1:$listbuild(id_"",tClass)) }
+%DeleteData(id,concurrency) public {
+	Quit:id="" $$Error^%apiOBJ(5812)
+	set $Ztrap="DeleteDataERR" set lockok=0,sc=""
+	if concurrency {  lock +(^MDG.RequestD(id)#"E"):$zu(115,4) set lockok=$s('$t:0,1:$case($SYSTEM.Lock.ReturnCode(),0:1,2:2,4:2,:0)) set:lockok=2&&($tlevel) %0CacheLock($classname(),"E")=1 if 'lockok { quit $$Error^%apiOBJ(5803,$classname()) } }
+	If ($Data(^MDG.RequestD(id))) {
+		If $data(^oddEXTR($classname())) {
+			n %fc,%fk,%z
+			Set %fc="" For  Set %fc=$order(^oddEXTR($classname(),"n","IDKEY","f",%fc)) Quit:%fc=""  Set %fk="" For  Set %fk=$order(^oddEXTR($classname(),"n","IDKEY","f",%fc,%fk)) Quit:%fk=""  Set %z=$get(^oddEXTR($classname(),"n","IDKEY","f",%fc,%fk,61)) If %z'="" Set sc=$classmethod(%fc,%fk_"Delete",id) If ('sc) Goto DeleteDataEXIT
+		}
+		Kill ^MDG.RequestD(id)
+		Set sc=1
+	}
+	else { set sc=$$Error^%apiOBJ(5810,$classname(),id) }
+DeleteDataEXIT
+	if (concurrency) && (lockok) { lock -(^MDG.RequestD(id)#"E") }
+DeleteDataRET	Set $Ztrap = ""
+	QUIT sc
+DeleteDataERR	Set $Ztrap = "DeleteDataRET"
+	Set sc = $$Error^%apiOBJ(5002,$ZE)
+	Goto DeleteDataEXIT }
+%Exists(oid="") public {
+	Quit ..%ExistsId($listget(oid)) }
+%ExistsId(id) public {
+	try { set tExists = $s(id="":0,$d(^MDG.RequestD(id)):1,1:0) } catch tException { set tExists = 0 } quit tExists }
+%FileIndices(id,pIndexHandle=0) public {
+	QUIT 1 }
+%InsertBatch(objects,concurrency=0,useTransactions=0) public {
+	try {
+		set numerrs=0,errs="",cnt=0,ptr=0
+		while $listnext(objects,ptr,data) {
+			set cnt=cnt+1
+			set lock=0
+			if (useTransactions) tstart
+			set id=$i(^MDG.RequestD)
+			try {
+				set tInnerException = ""
+				;
+				if concurrency { lock +(^MDG.RequestD(id)#"E"):$zu(115,4) set lock=$s('$t:0,1:$case($SYSTEM.Lock.ReturnCode(),0:1,2:2,4:2,:0)) set:lock=2&&($tlevel) %0CacheLock($classname(),"E")=1 if 'lock { Throw ##class(%Exception.StatusException).CreateFromStatus($$Error^%apiOBJ(5803,$classname())) } }
+				set ^MDG.RequestD(id)=data
+				if (useTransactions) { tcommit }
+			}
+			catch tInnerException {
+				set newerr=$lb(cnt,tInnerException.AsStatus())
+				if '($length(errs)+$length(newerr)>32767) { set numerrs=numerrs+1, errs=errs_newerr }
+				if (useTransactions) && ($Tlevel) trollback
+			}
+			if lock lock -(^MDG.RequestD(id)#"E")
+		}
+	}
+	catch tException {
+		set newerr=$lb($g(cnt),tException.AsStatus())
+		if '($length(errs)+$length(newerr)>32767) { set numerrs=numerrs+1, errs=errs_newerr }
+	}
+	QUIT ($lb(numerrs))_errs }
+%KillExtentData()
+	Kill ^MDG.RequestD
+	Quit 1
+%LoadData(id)
+	New sc
+	Set sc=""
+	If ..%Concurrency=4 Lock +(^MDG.RequestD(id)):$zu(115,4) If '$test QUIT $$Error^%apiOBJ(5803,$classname())
+	If ..%Concurrency'=4,..%Concurrency>1 Lock +(^MDG.RequestD(id)#"S"):$zu(115,4) If '$test QUIT $$Error^%apiOBJ(5804,$classname())
+	i '$d(^MDG.RequestD(id)) 
+	Else  Do
+	. New %s1
+	. Set sc=1
+	. s %s1=$g(^MDG.RequestD(id))
+	If ..%Concurrency=2 Lock -(^MDG.RequestD(id)#"SI")
+	Quit $select(sc'="":sc,1:$$Error^%apiOBJ(5809,$classname(),id))
+%LoadDataFromMemory(id,objstate,obj)
+	New sc
+	Set sc=""
+	i '$d(objstate(id)) 
+	Else  Do
+	. New %s1
+	. Set sc=1
+	. s %s1=$g(objstate(id))
+	Set sc = $select(sc'="":sc,1:$$Error^%apiOBJ(5809,$classname(),id))
+	 Quit sc
+%LockExtent(shared=0) public {
+	if shared { l +(^MDG.RequestD#"S"):$zu(115,4) if $t { q 1 } else { q $$Error^%apiOBJ(5799,$classname()) }} l +(^MDG.RequestD):$zu(115,4) if $t { q 1 } else { q $$Error^%apiOBJ(5798,$classname()) }
+}
+%LockId(id,shared=0,timeout) public { Set:'($data(timeout)#2) timeout=$zu(115,4)
+	if id'="" { set sc=1 } else { set sc=$$Error^%apiOBJ(5812) quit sc }
+	if 'shared { Lock +(^MDG.RequestD(id)):timeout i $test { q 1 } else { q $$Error^%apiOBJ(5803,$classname()) } }
+	else { Lock +(^MDG.RequestD(id)#"S"):timeout if $test { q 1 } else { q $$Error^%apiOBJ(5804,$classname()) } }
+}
+%OnDetermineClass(oid,class)
+	New id,idclass
+	Set id=$listget($get(oid)) QUIT:id="" $$Error^%apiOBJ(5812)
+	Set idclass=$lg($get(^MDG.RequestD(id)),1)
+	If idclass="" Set class="MDG.Request" Quit 1
+	Set class=$piece(idclass,$extract(idclass),$length(idclass,$extract(idclass))-1)
+	Set:class'["." class="User."_class
+	QUIT 1
+%PhysicalAddress(id,paddr)
+	if $Get(id)="" Quit $$Error^%apiOBJ(5813,$classname())
+	if (id="") { quit $$Error^%apiOBJ(5832,$classname(),id) }
+	s paddr(1)=$lb($Name(^MDG.RequestD(id)),$classname(),"IDKEY","listnode",id)
+	s paddr=1
+	Quit 1
+%PurgeIndices(idxlist="",lockExtent=0)
+	if $ll(idxlist) { quit $$Error^%apiOBJ(5066,$classname()_"::"_$ListToString(idxlist)) } QUIT 1
+	Quit
+%SQLAcquireLock(%rowid,s=0,unlockref=0)
+	new %d,gotlock
+	set %d(1)=%rowid set s=$e("E",'unlockref)_$e("S",s)
+	lock +^MDG.RequestD(%d(1))#s:$zu(115,4) set gotlock=$t
+	if gotlock,'unlockref { set:$case($SYSTEM.Lock.ReturnCode(),2:1,4:1,:0)&&($tlevel) %0CacheLock("MDG.Request","E")=1 }
+	set:gotlock&&unlockref unlockref=unlockref+1,unlockref(unlockref)=$lb($name(^MDG.RequestD(%d(1))),"MDG.Request",s_"D")
+	QUIT gotlock
+%SQLAcquireTableLock(s=0,SQLCODE,to="")
+	set s=$e("S",s) set:to="" to=$zu(115,4) lock +^MDG.RequestD#s:to QUIT:$t 1 set SQLCODE=-110 if s="S" { set %msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler35",,"MDG"_"."_"Request") } else { set %msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler36",,"MDG"_"."_"Request") } QUIT 0
+	Quit
+%SQLBuildIndices(pIndices="",pLockFlag=0,pStartID="",pEndID="")
+	QUIT ..%BuildIndices(pIndices,,pLockFlag,,pStartID,pEndID)
+%SQLCopyIcolIntoName()
+	if %oper="DELETE" {
+		set:$d(%d(1)) %f("ID")=%d(1)
+		QUIT
+	}
+	set:$d(%d(1)) %f("ID")=%d(1) set:$a(%e,2)&&$d(%d(2)) %f("x__classname")=%d(2)
+	QUIT
+%SQLDefineiDjVars(%d,subs)
+	QUIT
+%SQLDelete(%rowid,%check,%tstart=1,%mv=0,%polymorphic=0)
+	new bva,ce,%d,dc,%e,%ele,%itm,%key,%l,%nc,omcall,%oper,%pos,%s,sn,sqlcode,subs set %oper="DELETE",sqlcode=0,%ROWID=%rowid,%d(1)=%rowid,%e(1)=%rowid,%l=$c(0)
+	if '$d(%0CacheSQLRA) { new %0CacheSQLRA set omcall=1 }
+	if '$a(%check,2) {
+		new %ls lock +^MDG.RequestD(%d(1))#"E":$zu(115,4) set %ls=$s('$t:0,1:$case($SYSTEM.Lock.ReturnCode(),0:1,4:2,2:2,1:3,:""))
+		set:%ls=2 $e(%check,2)=$c(1) set:%ls=2&&($tlevel) %0CacheLock("MDG.Request","E")=1 set:$case(%ls,1:1,2:1,:0) $e(%l)=$c(1)
+		if '%ls||(%ls=3) { set SQLCODE=-110,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer",$s('%ls:"SQLFiler40",1:"SQLFiler55"),,%oper,"MDG"_"."_"Request",$g(%d(1))) QUIT  }
+	}
+	if %tstart { TSTART:($zu(115,1)=1)||('$TLEVEL&&($zu(115,1)=2))  }
+	set $zt="ERRORDelete"
+	do ..%SQLGetOld(%rowid,.%d,.%e,.sqlcode) if sqlcode { set SQLCODE=-106 do ..%SQLEExit() QUIT  }
+	if %e(2)'="" { set sn=$p(%e(2),$e(%e(2)),$l(%e(2),$e(%e(2)))-1) if "MDG.Request"'=sn { new %f do ..%SQLCopyIcolIntoName() do $classmethod(sn,"%SQLDelete",%rowid,%check,%tstart,%mv,1) QUIT  }}
+	if '$a(%check),'$zu(115,7) do  if sqlcode set SQLCODE=sqlcode do ..%SQLEExit() QUIT  
+	. new %fk,%k,%p,%st,%t,%z set %k="",%p("%1")="%d(1),",%p("IDKEY")="%d(1),"
+	. for  quit:sqlcode<0  set %k=$o(^oddEXTR("MDG.Request","n",%k)) quit:%k=""  set %t="" for  set %t=$o(^oddEXTR("MDG.Request","n",%k,"f",%t)) quit:%t=""  set %st=(%t="MDG.Request") set %fk="" for  set %fk=$order(^oddEXTR("MDG.Request","n",%k,"f",%t,%fk)) quit:%fk=""  x "set %z=$classmethod(%t,%fk_""SQLFKeyRefAction"",%st,%k,$a(%check,2),"_%p(%k)_")" if %z set sqlcode=-124 quit  
+	set ce="" for  { set ce=$order(^oddSQL("MDG","Request","DC",ce)) quit:ce=""   do $classmethod(ce,"%SQLDeleteChildren",%d(1),%check,.sqlcode) quit:sqlcode<0  } if sqlcode<0 { set SQLCODE=sqlcode do ..%SQLEExit() QUIT } // Delete any children
+	if '$a(%check,3) {
+	}
+	k ^MDG.RequestD(%d(1))
+	do ..%SQLUnlock() TCOMMIT:%tstart&&($zu(115,1)=1)
+	set SQLCODE=0 kill:$g(omcall) %0CacheSQLRA
+	QUIT
+ERRORDelete	set $zt="",SQLCODE=-415,%msg=$s($g(%msg)'="":%msg_" -- ",1:"")_$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler51",,%oper,"MDG"_"."_"Request",$ze) if $ze["<FRAMESTACK>" { set %msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler52",,$ze,%oper,"MDG"_"."_"Request") do ##Class(%SYS.System).WriteToConsoleLog(%msg) if ($zu(67,10,$j)=1)||($zu(67,10,$j)=3) { write !,%msg h 3 } HALT  } do ..%SQLEExit() QUIT
+	Quit
+%SQLDeleteTempStreams()
+	// Delete all temporary streams
+	QUIT
+%SQLEExit()
+	do ..%SQLUnlock() 
+	if %tstart,$zu(115,1)=1,$TLEVEL { set %tstart=0 TROLLBACK 1 } kill:$g(omcall) %0CacheSQLRA QUIT  
+	Quit
+%SQLExists(pLockOnly=0,pUnlockRef,%pVal...)
+	// SQL Foreign Key validation entry point for Key %1.  Called by FKeys that reference this Key to see if the row is defined
+	new id set id=%pVal(1)
+	if pLockOnly>=0 { if '..%SQLGetLock(id,1,.pUnlockRef) { set sqlcode=-114,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler39",,"MDG"_"."_"Request"_":"_"%1") QUIT 0 } }
+	if pLockOnly<1 {
+		new qv set qv=$d(^MDG.RequestD(%pVal(1))) QUIT:pLockOnly=-1 qv
+		do:'$g(pUnlockRef) ..%SQLReleaseLock(id,1) quit qv
+	}
+	else { do:'$g(pUnlockRef) ..%SQLReleaseLock(id,1) QUIT 1 }
+	Quit
+%SQLGetLock(pRowId,pShared=0,pUnlockRef)
+	QUIT ..%SQLAcquireLock(pRowId,pShared,.pUnlockRef)
+%SQLGetOld(%rowid,%d,%e,sqlcode)
+	new s set %d(1)=%rowid if '$d(^MDG.RequestD(%d(1)),s) { set sqlcode=100 quit  }
+	set %e(2)=$lg(s)
+	QUIT
+%SQLGetOldAll()
+	new s set %d(1)=%rowid if '$d(^MDG.RequestD(%d(1)),s) { set sqlcode=100 quit  }
+	set %e(2)=$lg(s)
+	QUIT
+%SQLInsert(%d,%check,%inssel,%vco,%tstart=1,%mv=0)
+	new bva,%ele,%itm,%key,%l,%n,%nc,%oper,%pos,%s,sqlcode,sn,subs,icol set %oper="INSERT",sqlcode=0,%l=$c(0,0,0)
+	if $a(%check,7) { new %diu merge %diu=%d }
+	if $d(%d(1)),'$zu(115,11) { if %d(1)'="" { set SQLCODE=-111,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler6",,"ID","MDG"_"."_"Request") QUIT ""  } kill %d(1) } 
+	do ..%SQLNormalizeFields()
+	if %tstart { TSTART:($zu(115,1)=1)||('$TLEVEL&&($zu(115,1)=2))  } set $zt="ERRORInsert"
+	if '$a(%check) {
+		do {
+			if $g(%vco)'="" { d @%vco quit:sqlcode<0  }
+		} while 0
+		if sqlcode<0 set SQLCODE=sqlcode do ..%SQLEExit() QUIT ""		// A constraint failed
+	}
+	if '$d(%d(1)) { set %d(1)=$i(^MDG.RequestD) } elseif %d(1)>$g(^MDG.RequestD) { if $i(^MDG.RequestD,$zabs(%d(1)-$g(^MDG.RequestD))) {}} elseif $d(^MDG.RequestD(%d(1))) { set SQLCODE=-119,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler33",,"ID",%d(1),"MDG"_"."_"Request"_"."_"ID") do ..%SQLEExit() QUIT "" }
+	for icol=2 set:'$d(%d(icol)) %d(icol)=""
+	if '$a(%check,2) {
+		new %ls lock +^MDG.RequestD(%d(1))#"E":$zu(115,4) set %ls=$s('$t:0,1:$case($SYSTEM.Lock.ReturnCode(),0:1,4:2,2:2,1:3,:""))
+		set:%ls=2 $e(%check,2)=$c(1) set:%ls=2&&($tlevel) %0CacheLock("MDG.Request","E")=1 set:$case(%ls,1:1,2:1,:0) $e(%l)=$c(1)
+		if '%ls||(%ls=3) { set SQLCODE=-110,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer",$s('%ls:"SQLFiler40",1:"SQLFiler55"),,%oper,"MDG"_"."_"Request",$g(%d(1))) do ..%SQLEExit() QUIT ""  }
+	}
+	set ^MDG.RequestD(%d(1))=$lb($g(%d(2)))
+	if '$a(%check,3) {
+	}
+	lock:$a(%l) -^MDG.RequestD(%d(1))#"E"
+	TCOMMIT:%tstart&&($zu(115,1)=1)
+	set SQLCODE=0 QUIT %d(1) 			// %SQLInsert
+ERRORInsert	set $zt="",SQLCODE=-415,%msg=$s($g(%msg)'="":%msg_" -- ",1:"")_$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler51",,%oper,"MDG"_"."_"Request",$ze)
+	if $ze["<FRAMESTACK>" { set %msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler52",,$ze,%oper,"MDG"_"."_"Request") do ##Class(%SYS.System).WriteToConsoleLog(%msg) if ($zu(67,10,$j)=1)||($zu(67,10,$j)=3) { write !,%msg h 3 } HALT  }
+	do ..%SQLEExit()
+	QUIT ""
+%SQLMissing(fname)
+	set sqlcode=-108,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler47",,fname,"MDG"_"."_"Request") quit
+%SQLNormalizeFields()
+	QUIT
+%SQLPurgeIndices(pIndices="",pLockExtent=0)
+	QUIT ..%PurgeIndices(pIndices,pLockExtent)
+%SQLQuickBulkInsert(%nolock=0)
+	// Insert multiple new rows with values %qd(icol)
+	new c,call,nc,nr,%qd,r,x set:%nolock=2 %nolock=0
+	set nr=$zobjexport(12) for r=1:1:nr { set nc=$zobjexport(12) kill %qd for c=1:1:nc { set:$zobjexport(17) %qd(c+1)=$zobjexport(12) } do ..%SQLQuickInsert(.%qd,%nolock) set x=$zobjexport($s(%qrc:-1,1:%ROWID),18) } QUIT
+%SQLQuickBulkLoad(%rowidlist,%nolock=0,pkey=0)
+	// QuickLoad multiple rows
+	new i,rc set:%nolock=2 %nolock=0 set rc=0
+	for i=2:1:$lg(%rowidlist)+1 { do ..%SQLQuickLoad($lg(%rowidlist,i),%nolock) if SQLCODE=0 { set rc=rc+1 } else { QUIT  } } set %ROWCOUNT=rc QUIT
+	Quit
+%SQLQuickBulkSave(%nolock=0)
+	// Insert and/or Update multiple [new] rows with values %qd(icol)
+	set x=$zobjexport(-1,18),%qrc=400,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler44",,"MDG"_"."_"Request") QUIT
+%SQLQuickBulkUpdate(%nolock=0)
+	// Update multiple new rows with values %qd(icol)
+	new c,call,nc,nr,%qd,r,x set:%nolock=2 %nolock=0 set nr=$zobjexport(12) for r=1:1:nr { set %rowid=$zobjexport(12),nc=$zobjexport(12) kill %qd for c=1:1:nc { set:$zobjexport(17) %qd(c+1)=$zobjexport(12) } do ..%SQLQuickUpdate(%rowid,.%qd,%nolock) set x=$zobjexport($s(%qrc:-1,1:%ROWID),18) quit:%qrc  } QUIT  
+%SQLQuickDelete(%rowid,%nolock=0,pkey=0)
+	// Delete row where SQLRowID=%rowid
+	set:%nolock=2 %nolock=0
+	do ..%SQLDelete(%rowid,$c(0,%nolock=1,0,0,0,0))
+	if SQLCODE<0 { set %qrc=-SQLCODE,%ROWCOUNT=0 } else { set %ROWCOUNT=1,%qrc=SQLCODE } QUIT
+	Quit
+%SQLQuickInsert(d,%nolock=0,pkey=0,parentpkey=0)
+	// Insert new row with values d(icol)
+	set:%nolock=2 %nolock=0
+	do ..%SQLQuickOdbcToLogical(.d)
+	set %ROWID=..%SQLInsert(.d,$c(0,%nolock=1,0,0,0,0)),%ROWCOUNT='SQLCODE,%qrc=SQLCODE kill d QUIT
+%SQLQuickLoad(%rowid,%nolock=0,pkey=0,qq=0)
+	// Get fields from row where SQLRowID=%rowid
+	new d,i,il,subs set:%nolock=2 %nolock=1
+	if %nolock=0 { if '..%SQLAcquireLock(%rowid) { set %qrc=114,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler45",,"MDG"_"."_"Request",%rowid),%ROWCOUNT=0 QUIT  } set:$zu(115,2) il=$zu(115,2,0) }
+	new s,ul set ul=0,d(1)=%rowid if $zu(115,2)=1 { lock +^MDG.RequestD(d(1))#"S":$zu(115,4) if $t { set ul=1 } else { set %qrc=114,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler46",,"MDG"_"."_"Request",%rowid),%ROWCOUNT=0 quit  } }
+	if '$d(^MDG.RequestD(d(1)),s) { set SQLCODE=100,%qrc=100 if %nolock=0 { do:$g(il) $zu(115,2,il) }} else { set SQLCODE=0
+	if qq { set d(2)=$lg(s) if d(2)'="" { new sn set sn=$p(d(2),$e(d(2)),$l(d(2),$e(d(2)))-1) if "MDG.Request"'=sn { if %nolock=0 { do ..%SQLReleaseLock(%rowid,0,1) do:$g(il) $zu(115,2,il) } kill d set:sn'["." sn="User."_sn do $classmethod(sn,"%SQLQuickLoad",%rowid,%nolock,0,1) QUIT  }}}
+	set d(2)=$lg(s)  }
+	do ..%SQLQuickLogicalToOdbc(.d)
+	if SQLCODE set %ROWCOUNT=0 set:SQLCODE<0 SQLCODE=-SQLCODE lock:ul -^MDG.RequestD(d(1))#"SI" set %qrc=SQLCODE QUIT
+	set:qq d=$zobjexport("MDG.Request",18),d=$zobjexport(2,18) set i=-1 for  { set i=$o(d(i)) quit:i=""  set d=$zobjexport(d(i),18) } set %qrc=0,%ROWCOUNT=1 lock:ul -^MDG.RequestD(d(1))#"SI" if %nolock=0 { do ..%SQLReleaseLock(%rowid,0,0) do:$g(il) $zu(115,2,il) } QUIT
+	Quit
+%SQLQuickLogicalToOdbc(%d)
+	QUIT
+%SQLQuickOdbcToLogical(%d)
+	QUIT
+%SQLQuickUpdate(%rowid,d,%nolock=0,pkey=0)
+	// Update row with SQLRowID=%rowid with values d(icol)
+	set:%nolock=2 %nolock=0
+	do ..%SQLQuickOdbcToLogical(.d)
+	do ..%SQLUpdate(%rowid,$c(0,%nolock=1,0,0,0,0),.d) set %ROWCOUNT='SQLCODE set:SQLCODE=100 SQLCODE=0 set %qrc=SQLCODE kill d QUIT
+%SQLReleaseLock(%rowid,s=0,i=0,e="")
+	new %d
+	set:e="" e=1 set %d(1)=%rowid set s=$e("E",e)_$e("S",s)_$e("D",i)
+	lock -^MDG.RequestD(%d(1))#s
+	QUIT
+%SQLReleaseTableLock(s=0,i=0)
+	set s=$e("S",s)_$e("D",i) lock -^MDG.RequestD#s QUIT 1
+	Quit
+%SQLUnlock()
+	lock:$a(%l) -^MDG.RequestD(%d(1))#"E"
+	QUIT
+%SQLUnlockError(cname)
+	set sqlcode=-110 if %oper="DELETE" { set %msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler48",,"MDG"_"."_"Request",cname) } else { set %msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler49",,"MDG"_"."_"Request",cname) } quit
+	Quit
+%SQLUpdate(%rowid,%check,%d,%vco,%tstart=1,%mv=0,%polymorphic=0,%soid)
+	new %e,bva,%ele,%itm,%key,%l,%n,%nc,%oper,%pos,%s,icol,omcall,s,sn,sqlcode,subs,t set %oper="UPDATE",sqlcode=0,%ROWID=%rowid,$e(%e,1)=$c(0),%l=$c(0,0,0)
+	if '$d(%0CacheSQLRA) { new %0CacheSQLRA set omcall=1 }
+	do ..%SQLNormalizeFields()
+	if $d(%d(1)),%d(1)'=%rowid { set SQLCODE=-107,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler16",,"ID","MDG"_"."_"Request") QUIT  }
+	for icol=2:1:2 { set $e(%e,icol)=$c($d(%d(icol))) }
+	set %d(1)=%rowid,%e(1)=%rowid
+	if '$a(%check,2) {
+		new %ls lock +^MDG.RequestD(%d(1))#"E":$zu(115,4) set %ls=$s('$t:0,1:$case($SYSTEM.Lock.ReturnCode(),0:1,4:2,2:2,1:3,:""))
+		set:%ls=2 $e(%check,2)=$c(1) set:%ls=2&&($tlevel) %0CacheLock("MDG.Request","E")=1 set:$case(%ls,1:1,2:1,:0) $e(%l)=$c(1)
+		if '%ls||(%ls=3) { set SQLCODE=-110,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer",$s('%ls:"SQLFiler40",1:"SQLFiler55"),,%oper,"MDG"_"."_"Request",$g(%d(1))) QUIT  }
+	}
+	if %tstart { TSTART:($zu(115,1)=1)||('$TLEVEL&&($zu(115,1)=2))  }
+	set $zt="ERRORUpdate"
+	if $g(%vco)="" { do ..%SQLGetOld(%rowid,.%d,.%e,.sqlcode) i sqlcode { s SQLCODE=-109 do ..%SQLEExit() QUIT  } set:'$d(%d(2)) %d(2)=%e(2) set:%d(2)=%e(2) $e(%e,2)=$c(0) } else { do ..%SQLGetOldAll() if sqlcode { set SQLCODE=-109 do ..%SQLEExit() QUIT  } set:'$d(%d(2)) %d(2)=%e(2) set:%d(2)=%e(2) $e(%e,2)=$c(0)}
+	if %e(2)'="" set sn=$p(%e(2),$e(%e(2)),$l(%e(2),$e(%e(2)))-1) if "MDG.Request"'=sn new %f do ..%SQLCopyIcolIntoName() do $classmethod(sn,"%SQLUpdate",%rowid,%check,.%d,$g(%vco),%tstart,%mv,1) QUIT
+	if '$a(%check) {
+		do {
+			if $g(%vco)'="" { d @%vco quit:sqlcode<0  }
+		} while 0
+		if sqlcode { set SQLCODE=sqlcode do ..%SQLEExit() QUIT  }
+	}
+	set:$a(%e,2) ^MDG.RequestD(%d(1))=$lb($g(%d(2)))
+	do ..%SQLUnlock() TCOMMIT:%tstart&&($zu(115,1)=1)
+	set SQLCODE=0 kill:$g(omcall) %0CacheSQLRA
+	QUIT
+ERRORUpdate	set $zt="",SQLCODE=-415,%msg=$s($g(%msg)'="":%msg_" -- ",1:"")_$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler51",,%oper,"MDG"_"."_"Request",$ze) if $ze["<FRAMESTACK>" { set %msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler52",,$ze,%oper,"MDG"_"."_"Request") do ##Class(%SYS.System).WriteToConsoleLog(%msg) if ($zu(67,10,$j)=1)||($zu(67,10,$j)=3) { write !,%msg h 3 } HALT  } do ..%SQLEExit() QUIT  
+	Quit
+%SQLValidateFields(sqlcode)
+	QUIT 'sqlcode
+%SQLnBuild() public {
+	set %n=$lb(,"ID","x__classname")
+	QUIT }
+%SaveData(id) public {
+	try {
+		set id=$listget(i%"%%OID") if id'="" { set insert=0,idassigned=1 } else { set insert=1,idassigned=0 }
+		set lock=0,lockok=0,tSharedLock=0
+		if 'idassigned { set id=$i(^MDG.RequestD) Set $zobjoid("MDG.Request",id)=$this,.."%%OID"=$lb(id_"","MDG.Request") set:$g(%objtxSTATUS)=2 %objtxOIDASSIGNED(+$this)="" }
+		try {
+			set tInnerException = ""
+			if 'insert && ('$Data(^MDG.RequestD(id))) { set insert=1 }
+			;
+			if insert {
+				if (..%Concurrency&&$tlevel)||(..%Concurrency=4) { if ..%Concurrency < 4 { lock +(^MDG.RequestD(id)#"E"):$zu(115,4) set lockok=$s('$t:0,1:$case($SYSTEM.Lock.ReturnCode(),0:1,2:2,4:2,:0)) set:lockok=2 %0CacheLock($classname(),"E")=1 set:lockok lock=1 } else { lock +(^MDG.RequestD(id)):$zu(115,4) set lockok=$Select($test:1,1:0),lock=0 } if 'lockok { Throw ##class(%Exception.StatusException).CreateFromStatus($$Error^%apiOBJ(5803,$classname())) } }
+				if ..%Concurrency=3 { lock +(^MDG.RequestD(id)#"S") set tSharedLock=1 }
+				set ^MDG.RequestD(id)=$lb("")
+			}
+			else {
+				if (..%Concurrency<4)&&(..%Concurrency) { lock +(^MDG.RequestD(id)#"E"):$zu(115,4) set lockok=$s('$t:0,1:$case($SYSTEM.Lock.ReturnCode(),0:1,2:2,4:2,:0)) set:lockok=2&&($tlevel) %0CacheLock($classname(),"E")=1 if lockok { set lock=1 } else { Throw ##class(%Exception.StatusException).CreateFromStatus($$Error^%apiOBJ(5803,$classname())) } }
+				set ^MDG.RequestD(id)=$lb("")
+			}
+			set tStatus = 1
+		}
+		catch tInnerException {
+			if ('idassigned) { Set $zobjoid("",$listget(i%"%%OID"))="" Set $this."%%OID" = "" kill:$g(%objtxSTATUS)=2 %objtxOIDASSIGNED(+$this) }
+			if (tSharedLock) {  lock -(^MDG.RequestD(id)#"S") } elseif (lockok=1)&&(insert)&&(..%Concurrency=4) {  lock -(^MDG.RequestD(id)) }
+		}
+		if lock lock -(^MDG.RequestD(id)#"E")
+		if $Isobject(tInnerException) { throw tInnerException }
+	}
+	catch tException {
+		set tStatus = tException.AsStatus()
+	}
+	quit tStatus }
+%SaveDirect(id="",idList="",data,concurrency=-1) public {
+	try {
+		if concurrency=-1 { set concurrency=$zu(115,10) }
+		if id'="" { set insert=0,idassigned=1 } else { set insert=1,idassigned=0 }
+		set lock=0,tSharedLock=0
+		if 'idassigned { set id=$i(^MDG.RequestD) }
+		try {
+			set tInnerException = ""
+			if 'insert && ('$Data(^MDG.RequestD(id))) { set insert=1 }
+			;
+			if insert {
+				if concurrency { lock +(^MDG.RequestD(id)#"E"):$zu(115,4) set lock=$s('$t:0,1:$case($SYSTEM.Lock.ReturnCode(),0:1,2:2,4:2,:0)) set:lock=2&&($tlevel) %0CacheLock($classname(),"E")=1 if 'lock { Throw ##class(%Exception.StatusException).CreateFromStatus($$Error^%apiOBJ(5803,$classname())) } }
+				set ^MDG.RequestD(id)=data
+			}
+			else {
+				if concurrency { lock +(^MDG.RequestD(id)#"E"):$zu(115,4) set lock=$s('$t:0,1:$case($SYSTEM.Lock.ReturnCode(),0:1,2:2,4:2,:0)) set:lock=2&&($tlevel) %0CacheLock($classname(),"E")=1 if 'lock { Throw ##class(%Exception.StatusException).CreateFromStatus($$Error^%apiOBJ(5803,$classname())) } }
+				set ^MDG.RequestD(id)=data
+			}
+			set tStatus = 1
+		}
+		catch tInnerException {
+		}
+		if lock lock -(^MDG.RequestD(id)#"E")
+		if $Isobject(tInnerException) { throw tInnerException }
+	}
+	catch tException {
+		set tStatus = tException.AsStatus()
+	}
+	quit tStatus }
+%SaveIndices(pStartId="",pEndId="",lockExtent=0) public {
+ QUIT 1 }
+%UnlockExtent(shared=0,immediate=0) public {
+	if ('immediate)&&('shared) { l -^MDG.RequestD q 1 } elseif (immediate)&&('shared) { l -^MDG.RequestD#"I" q 1 } elseif ('immediate)&&(shared) { l -^MDG.RequestD#"S" q 1 } else { l -^MDG.RequestD#"SI" q 1 }
+}
+%UnlockId(id,shared=0,immediate=0) public {
+	if ('immediate)&&('shared) { Lock -(^MDG.RequestD(id)) q 1 } elseif (immediate)&&('shared) { Lock -(^MDG.RequestD(id)#"I") q 1 } elseif ('immediate)&&(shared) { Lock -(^MDG.RequestD(id)#"S") q 1 } else { Lock -(^MDG.RequestD(id)#"SI") q 1 }
+}
+%ValidateIndices(idxList="",autoCorrect=0,lockOption=1,multiProcess=1)
+	w !,"There are no indices to validate for class 'MDG.Request'"
+	QUIT 1
+zCompilationClass() public {
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+    set sn = $namespace
+    set $namespace = obj.namespace
+    set str = ""
+    set status=$system.OBJ.Compile(obj.nameClass)
+    if ('status) {
+        write "[{""""ErrorText"":"
+        do $System.Status.DisplayError(status) write """}]"
+    }
+    set $namespace = sn
+    quit 1 }
+zCompileAll() public {
+	set status=1
+	Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+	set List=##class(%Library.ListOfDataTypes).%New()
+	s Dir=obj.CurrentDir_"/Classes"
+	d ..FileList(Dir,List)
+	For i=1:1:List.Size{
+		set item=List.GetAt(i)
+		if $E(item,$LENGTH(item)-3,*)=".cls"{
+			set classname=$E($REPLACE($REPLACE($E(item,$LENGTH(Dir)+2,*),"\","."),"/","."),0,*-4)
+			    set sn = $namespace
+    			set $namespace = obj.NameSpace
+    			set status=$system.OBJ.Compile(classname)
+    			set $namespace = sn
+		}
+	}
+	do ..ROUTINE(obj.NameSpace,obj.CurrentDir)
+	quit 1 }
+zCreateBroker(broker) public {
+    set File=##class(%Library.File).%New()
+    //set st=File.CreateDirectory("c:\temp"),st=File.%Save()
+    set ns = $namespace, $namespace="%SYS"
+    set status=##class(Security.Applications).Get(broker,.CSP)
+    if status '=1 {
+        write !,"Broker "_broker_" created for the namespace "_ns
+        set cspProperties("AutheEnabled") = 64
+        set cspProperties("NameSpace") = ns
+        set cspProperties("DispatchClass") = "WEB.Broker"
+        set cspProperties("IsNameSpaceDefault") = 0
+        set tSC = ##Class(Security.Applications).Create(broker,.cspProperties)
+        if ('tSC) throw ##Class(%Exception.StatusException).CreateFromStatus(tSC)
+    }
+    set $namespace=ns
+    quit 1 }
+zCreateClass() public {
+    /* ?????? ?????????? ??????
+    data: { namespace: "MDG-DEV",
+          nameClass: "Example.Studio",
+          Super: "%Persistent,%Populate",
+          Abstract: "0",
+          Description: "This is TestClass"
+          }
+    */
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+    set sn = $namespace
+    set $namespace = obj.namespace
+    set o = ##class(%Dictionary.ClassDefinition).%New(obj.nameClass)
+    set o.Super = obj.Super
+    set o.Abstract = obj.Abstract
+    set o.Description = obj.Description
+    set status = o.%Save()
+    w status
+    if status {
+    set tSC=##class(%Compiler.UDL.TextServices).GetTextAsStream(obj.namespace,obj.nameClass,.tStream)
+    set file=##class(%Stream.FileBinary).%New()
+    set Dir=##class(%Library.File).%New()
+    set Path=obj.Path_obj.namespace_"/Classes"
+    set tempPath=Path_"/"
+    set List=$ListFromString(obj.nameClass,".")
+    for i=1:1:$ListLength(List)-1 {
+        set tempPath=tempPath_$List(List,i)_"/"
+        do Dir.CreateDirectory(tempPath)
+    }
+    set file.Filename=tempPath_$List(List,$ListLength(List))_".cls"
+    set status=file.Write($ZConvert(tStream.Read(tStream.Size),"O","UTF8"))
+    set status=file.%Save()
+    kill file
+    }
+    set $namespace = sn
+    quit 1 }
+zCreateMethod() public {
+    /* ?????? ?????????? ??????
+    data: { namespace: "MDG-DEV",
+      nameClass: "Example.Studio",
+      ClassMethod: "1",
+      nameMethod: "AtomIO",
+      ReturnType: "%Status",
+      Private: "0",
+      Final: "1"
+      }
+    */
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+    set sn = $namespace
+    set $namespace = obj.namespace
+    set method=##class(%Dictionary.MethodDefinition).%New(obj.nameClass)
+    set method.ClassMethod=obj.ClassMethod
+    set method.Name=obj.nameMethod
+    set method.ReturnType = obj.ReturnType
+    set method.Private = obj.Private
+    set method.Final = obj.Final
+    set status=method.%Save()
+    set $namespace = sn
+    quit 1 }
+zCreateProperty() public {
+    /* ?????? ?????????? ??????
+    data: { namespace: "MDG-DEV",
+      nameClass: "Example.Studio",
+      nameProperty: "test123",
+      Type: "%String",
+      Relationship: "0",
+      Required: "1",
+      Calculated: "0"
+      }
+    */
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+    set sn = $namespace
+    set $namespace = obj.namespace
+    set property=##class(%Dictionary.PropertyDefinition).%New(obj.nameClass)
+    set property.Name = obj.nameProperty
+    set property.Description = obj.Description
+    set property.Type = obj.Type
+    set property.Collection = obj.Collection
+    //?????????
+    set property.Relationship = obj.Relationship
+    set property.Required = obj.Required
+    set property.Calculated = obj.Calculated
+    //?????? ??????????
+    for i=1:1:obj.Parameter.Size{
+        do property.Parameters.SetAt(obj.Parameter.GetAt(i).Data,obj.Parameter.GetAt(i).Name)
+    }
+    set status=property.%Save()
+    set $namespace = sn
+    quit 1 }
+zDeleteClass() public {
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+    set sn = $namespace
+    set $namespace = obj.namespace
+    do ##class(%Studio.ClassMgr).Delete(obj.nameClass)
+    set $namespace = sn
+    quit 1 }
+zFileList(Dir,list) public {
+	s result=##class(%Library.ResultSet).%New("%Library.File:FileSet")
+	d result.Execute(Dir)
+	while result.Next()
+	{
+		if result.Get("Type")="F"{do list.Insert(result.Get("Name"))}
+		else{do ..FileList(result.Get("Name"),list)}
+	}
+	quit 1 }
+zGetAppPath(cspapp) public {
+    set ns = $namespace
+    set $namespace="%SYS"
+    kill csp
+    set csp = ##class(Security.Applications).Get(cspapp,.csp)
+    set $namespace=ns
+    quit $get(csp("Path")) }
+zGetClass() public {
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+	Set tSC=1
+    set temp=##class(%ZEN.proxyObject).%New()
+    try {
+        set tSC=##class(%Compiler.UDL.TextServices).GetTextAsStream(obj.NameSpace,obj.ClassName,.tStream)
+        if ('tSC) quit
+        set temp.SourceText=tStream.Read(tStream.Size)
+        set temp.NameSpace=obj.NameSpace
+        set temp.ClassName=obj.ClassName
+        do temp.%ToJSON()
+    }
+    catch (e) {
+        set tSC=e.AsStatus()
+    }
+    quit tSC }
+zGetClassList() public {
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+    set sn = $namespace
+    set $namespace = obj.NameSpace
+    set s=##class(%SQL.Statement).%New()
+    set sql = "SELECT * FROM %Dictionary.ClassDefinition  where NOT id %STARTSWITH '%' and system <>4"
+    set status=s.%Prepare(sql)
+    set str = ""
+    set rs=s.%Execute()
+    write "["
+    while rs.%Next() {
+        set str = str_ "{""Name"":"""_rs.%Get("ID")_"""},"
+    }
+    write $Extract(str,1,*-1)
+    write "]"
+    set $namespace = sn
+    quit 1 }
+zGetNamespaces() public {
+	Set tSC=1
+    set str=""
+    write "["
+    //Get the list of namespaces
+    do List^%SYS.NAMESPACE(.tList)
+    set tNS=""
+    for  {
+        set tNS=$Order(tList(tNS),1,tValue)
+        if tNS="" {quit}
+        set str=str_""""_tNS_""","
+    }
+    write $Extract(str,1,*-1)
+    write "]"
+    quit tSC }
+zGetParameters() public {
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+    set qqq = "%"_obj.Parameters
+    set s=##class(%Library.ResultSet).%New("%Dictionary.ParameterDefinitionQuery:Summary")
+    do s.Execute(qqq)
+    set str = ""
+    write "["
+    while s.Next() {
+        set str = str_ "{""Name"":"""_s.Get("Name")_"""},"
+    }
+    write $Extract(str,1,*-1)
+    write "]"
+    quit 1 }
+zGetPath() public {
+	Set Path=""
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+    set Path=obj.TempDir_obj.NameSpace
+    set ProxyObject=##class(%ZEN.proxyObject).%New()
+    set ProxyObject.Path=Path
+    set ProxyObject.Dir=obj.TempDir
+    do ProxyObject.%ToJSON()
+    set File=##class(%Library.File).%New()
+    do File.CreateDirectory(obj.TempDir)
+    do File.CreateDirectory(File.NormalizeDirectory( Path))
+    do ..WriteClassFiles(obj.NameSpace,Path)
+    set defapp = $System.CSP.GetDefaultApp(obj.NameSpace)
+    set linkPath = ..GetAppPath(defapp)
+    /*
+    FIXME- currently works only for the local project under Windows!
+    */
+    if ($zversion(1)=2) {
+        set mklPath = $Replace(Path,"/","\")
+        //w !,"lp - "_linkPath
+        do $zf(-1,"mklink /J "_mklPath_"\WebApps "_linkPath)
+        //w !,"mklink /J "_mklPath_"/WebApps "_linkPath
+        //do ..WriteWebFiles(obj.NameSpace,Path)
+    } else {
+        /// FIXME - TODO
+        set mklPath = $Replace(Path,"\","/")
+        //w "Tyt",!
+       // w "ln -s "_linkPath_" "_mklPath_"/WebApps ",!
+         do $zf(-1,"ln -s "_linkPath_" "_mklPath_"/WebApps ")
+        //ln -s H:\users\User\Downloads C:\Users\User\Downloads
+    }
+    do ..ROUTINE(obj.NameSpace,Path)
+    quit 1 }
+zROUTINE(namespace,Path) public {
+	Set st=1
+    set Path=Path_"/PROGRAMMS"
+    set File=##class(%Library.File).%New()
+    do File.CreateDirectory(Path)
+    set routine=##class(%Library.ResultSet).%New("%Library.Routine:RoutineList")
+    set status=routine.Execute("",1,"INT",namespace)
+    while routine.Next() {
+        set ns=$namespace
+        set $namespace=namespace
+        set temp=##class(%Library.Routine).%OpenId(routine.Get("Name"))
+        set $namespace=ns
+        set tempPath=Path_"/"
+        set type=$E(routine.Get("Name"),$LENGTH(routine.Get("Name"))-2,*)
+        set file=##class(%Stream.FileBinary).%New()
+        if (type="BAS"){
+	set file.Filename=tempPath_routine.Get("Name")
+        	set status=file.CopyFrom(temp)
+        	set status=file.%Save()
+	}
+        if (type="MAC"){
+	set file.Filename=tempPath_routine.Get("Name")
+        	set status=file.CopyFrom(temp)
+        	set status=file.%Save()
+	        }
+        if (type="INT"){
+	              set List=$ListFromString(routine.Get("Name"),".")
+        for i=1:1:$ListLength(List)-3 {
+            set tempPath=tempPath_$List(List,i)_"/"
+            do File.CreateDirectory(tempPath)
+        }
+        set file.Filename=tempPath_$List(List,$ListLength(List)-2)_"."_$List(List,$ListLength(List)-1)_"."_$ZConvert($List(List,$ListLength(List)),"L")
+        set status=file.CopyFrom(temp)
+        set status=file.%Save()
+        kill file
+	}
+    }
+    quit status }
+zRefresh() public {
+	Set st=1
+	Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+	set File=##class(%Library.File).%New()
+	set st= File.RemoveDirectoryTree(obj.Path)
+	set st= File.RemoveDirectoryTree(obj.Path)
+	do ..WriteClassFiles(obj.NameSpace,obj.Path)
+	do ..ROUTINE(obj.NameSpace,obj.Path)
+	w "{""status"":"_st_"}"
+	quit 1 }
+zSaveAll() public {
+	set status=1
+	Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+	set List=##class(%Library.ListOfDataTypes).%New()
+	s Dir=obj.CurrentDir_"/Classes"
+	d ..FileList(Dir,List)
+	For i=1:1:List.Size{
+		set item=List.GetAt(i)
+		if $E(item,$LENGTH(item)-3,*)=".cls"{
+			set classname=$E($REPLACE($REPLACE($E(item,$LENGTH(Dir)+2,*),"\","."),"/","."),0,*-4)
+			set sn = $namespace
+    			set $namespace = obj.NameSpace
+			set st=##class(%Dictionary.ClassDefinition).%ExistsId(classname)
+			set $namespace=sn
+			if (st)
+			{
+				set sn = $namespace
+    				set $namespace = obj.NameSpace
+				set tfile=##class(%Stream.FileBinary).%New()
+				set tfile.Filename=item
+				 set stream=##class(%Stream.GlobalCharacter).%New()
+    				do stream.Write($ZConvert(tfile.Read(tfile.Size),"I","UTF8"))
+    				set status= ##class(%Compiler.UDL.TextServices).SetTextFromStream(obj.NameSpace, classname, stream)
+    				set $namespace=sn
+			}
+			else
+			{
+			set sn = $namespace
+    			set $namespace = obj.NameSpace
+    			set class = ##class(%Dictionary.ClassDefinition).%New(classname)
+    			set class.Super = ""
+    			set class.Abstract = ""
+    			set class.Description = ""
+    			set status = class.%Save()
+    			if status {
+	    			set tfile=##class(%Stream.FileBinary).%New()
+				set tfile.Filename=item
+				set stream=##class(%Stream.GlobalCharacter).%New()
+    				do stream.Write($ZConvert(tfile.Read(tfile.Size),"I","UTF8"))
+    				set status= ##class(%Compiler.UDL.TextServices).SetTextFromStream(obj.NameSpace, classname, stream)
+	    		}
+    			set $namespace=sn
+			}
+		}
+	}
+	w "{""status"":"_status_"}"
+	Quit 1 }
+zUpdateClass() public {
+    /* ?????? ?????????? ??????
+    data: { namespace: "MDG-DEV",
+          text: "Class Example.Studio Extends (%Persistent,%Populate)'+'\r\n{'+'\r\n//hgjgjgjgh'+'\r\n}",
+          nameClass: "Example.Studio"
+          }
+    */
+    Set st=##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,,.obj,1) Throw:('st) ##class(%Exception.StatusException).CreateFromStatus(st)
+    set sn=$namespace
+    set $namespace= obj.namespace
+    set status=##class(%Dictionary.ClassDefinition).%ExistsId(obj.nameClass)
+    if ('st){
+        set nc = ##class(%Dictionary.ClassDefinition).%New(obj.nameClass)
+        set nc.Super = ""
+        set nc.Abstract = ""
+        set st = nc.%Save()
+        do ..WriteClassFiles(obj.namespace,obj.TempDir_obj.namespace)
+    }
+    set stream=##class(%Stream.GlobalCharacter).%New()
+    do stream.Write($ZConvert(obj.text,"I","UTF8"))
+    set status= ##class(%Compiler.UDL.TextServices).SetTextFromStream(obj.namespace, obj.nameClass, stream)
+    write status
+    set $namespace=sn
+    quit 1 }
+zWriteClassFile(NS,Class,text) public {
+    set Path=..#Path_NS_"/Classes"
+    set File=##class(%Library.File).%New()
+    set List=$ListFromString(Class,".")
+    set tempPath=Path_"/"
+    for i=1:1:$ListLength(List)-1 {
+        set tempPath=tempPath_$List(List,i)_"/"
+        if ($zversion(1)=2) {}
+        else{
+	        set tempPath=$REPLACE(tempPath,"/",".")
+	        }
+        do File.CreateDirectory(tempPath)
+    }
+    set file=##class(%Stream.FileBinary).%New()
+    set file.Filename=tempPath_$List(List,$ListLength(List))_".cls"
+    set status=file.Write($ZConvert(text,"O","UTF8"))
+    set status=file.%Save()
+    quit 1 }
+zWriteClassFiles(NS,Path) public {
+    set Path=Path_"/Classes"
+	Set st=1
+    set sn = $namespace
+    set $namespace = NS
+    set File=##class(%Library.File).%New()
+    do File.CreateDirectory(Path)
+    set s=##class(%SQL.Statement).%New()
+    set sql = "SELECT * FROM %Dictionary.ClassDefinition  where NOT id %STARTSWITH '%' and system <>4"
+    set status=s.%Prepare(sql)
+    set rs=s.%Execute()
+    while rs.%Next() {
+        set tempPath=Path_"/"
+        set List=$ListFromString(rs.%Get("ID"),".")
+        for i=1:1:$ListLength(List)-1 {
+            set tempPath=tempPath_$List(List,i)_"/"
+            do File.CreateDirectory(tempPath)
+        }
+        set tSC=##class(%Compiler.UDL.TextServices).GetTextAsStream(NS,rs.%Get("ID"),.tStream)
+        set file=##class(%Stream.FileBinary).%New()
+        set file.Filename=tempPath_$List(List,$ListLength(List))_".cls"
+        set status=file.Write($ZConvert(tStream.Read(tStream.Size),"O","UTF8"))
+        set status=file.%Save()
+        kill file
+        if ($zversion(1)=2) {}
+            else {
+	                     do $zf(-1,"chmod 777 "_tempPath_$List(List,$ListLength(List))_".cls")
+	            }
+    }
+    set $namespace=sn
+    quit status }
+zWriteWebFiles(NS,Path) public {
+    set Path=Path_"/Web"
+	Set st=1
+    // ???????? ??? ?????????? ?? ????????? ??? ??????? NS
+    set defapp = $System.CSP.GetDefaultApp(NS)
+    set ns = $namespace, $namespace="%SYS"
+    kill csp
+    set csp = ##class(Security.Applications).Get(defapp,.csp)
+    set $namespace=ns
+    set File=##class(%Library.File).%New()
+    set status=File.CreateDirectory(Path)
+    set Path=Path_defapp
+    set status=File.CreateDirectory(Path)
+    set status=File.CopyDir($get(csp("Path")),Path,1)
+    quit status }
+zExtentExecute(%qHandle) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1 
+	Set sc=1
+	s %qHandle=$i(%objcn)
+	 ;---&sql(DECLARE QExtent CURSOR FOR
+ 	 ;---		 SELECT ID FROM MDG.Request)
+ 	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
+	
+	 ;---&sql(OPEN QExtent)
+ 	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
+	Do %QExtent0o
+	If SQLCODE { Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.%Message=$g(%msg) Set sc=$$Error^%apiOBJ(5821,"SQLCODE = "_SQLCODE) } Else { Set sc=1 }
+	Quit sc }
+zExtentClose(%qHandle) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1 
+	 ;---&sql(CLOSE QExtent)
+ 	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
+	Do %QExtent0c
+	If SQLCODE { Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.%Message=$g(%msg) Set sc=$$Error^%apiOBJ(5540,SQLCODE,$get(%msg)) } Else { Set sc=1 }
+	Kill %objcsc(%qHandle),%objcsp(%qHandle),%objcss(%qHandle),%objcst(%qHandle),%objcsl(%qHandle),%objcsR(%qHandle),%objcsZ(%qHandle),%objcsd(%qHandle)
+	Quit sc }
+zExtentFetch(%qHandle,Row,AtEnd=0) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1 
+	Set Row="",AtEnd=0
+	 ;---&sql(FETCH QExtent INTO :c1)
+ 	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE, c1
+	Do %0Jo
+	If 'SQLCODE { Set Row=$lb(c1) Set sc=1 } ElseIf SQLCODE=100 { Set AtEnd=1,sc=1 Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.%ROWCOUNT=$g(%ROWCOUNT) } Else { Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.Message=$g(%msg) Set AtEnd=1,sc=$$Error^%apiOBJ(5540,SQLCODE,$get(%msg)) }
+	QUIT sc }
+zExtentFetchRows(%qHandle,FetchCount=0,RowSet,ReturnCount,AtEnd) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1 
+	Set RowSet="",ReturnCount=0,AtEnd=0
+	For {
+		 ;---&sql(FETCH QExtent INTO :c1)
+ 		 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE, c1
+		Do %0Ko
+		If 'SQLCODE { Set RowSet=RowSet_$lb(c1),ReturnCount=ReturnCount+1 Quit:(ReturnCount=FetchCount)||(($l(RowSet)+($l(RowSet)\ReturnCount))>24000) } Else { Set AtEnd=1 Quit }
+	}
+	If 'SQLCODE { Set sc=1 } ElseIf SQLCODE=100 { Set sc=1 Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.%ROWCOUNT=$g(%ROWCOUNT) } Else { Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.Message=$g(%msg) Set sc=$$Error^%apiOBJ(5540,SQLCODE,$get(%msg)) }
+	Quit sc }
+ q
+%QExtent0o 
+ s $zt="%QExtent0E" s SQLCODE=$s($g(%objcsc(%qHandle)):-101,1:0) q:SQLCODE'=0  s %objcsd(%qHandle,1)=0 set:$d(%0CacheRowLimit)#2 %objcsd(%qHandle,2)=%0CacheRowLimit s %objcsd(%qHandle,3)=0,%objcsd(%qHandle,4)="" d:$zu(115,15) $system.ECP.Sync()
+ s %objcsd(%qHandle,5)=$S($zu(115,12)=-1:0,$zu(115,12)>0:$zu(115,12),1:$zu(35,4))
+ if %objcsd(%qHandle,5)>1 { 
+      new StatsParams set StatsParams=0
+      do ##class(%SYS.PTools.SQLStats).Init("MDGDEV",$zn,"QExtent0",.StatsParams)
+  }
+ s %objcsc(%qHandle)=1,SQLCODE=0 q
+%QExtent0E s $zt="" d SQLRunTimeError^%apiSQL($ze,.SQLCODE,.%msg) k %objcsd(%qHandle),%objcsc(%qHandle),%objcss(%qHandle),%objcst(%qHandle),%objcsp(%qHandle) q
+%0Ffirst 
+ ; asl MOD# 2
+ d:%objcsd(%qHandle,5)=3 ##class(%SYS.PTools.SQLStats).Start("MDGDEV",$zn,"QExtent0",2)
+ s %objcsd(%qHandle,6)=""
+%0FmBk1 s %objcsd(%qHandle,6)=$o(^MDG.RequestD(%objcsd(%qHandle,6)),1)
+ i %objcsd(%qHandle,6)="" g %0FmBdun
+ goto:$zu(115,2)=0 %0FmBuncommitted
+ if $zu(115,2)=1 {
+ 	lock +^MDG.RequestD($p(%objcsd(%qHandle,6),"||",1))#"S":$zu(115,4)
+ 	if $t { set %objcsd(%qHandle,4)=$name(^MDG.RequestD($p(%objcsd(%qHandle,6),"||",1)))_"#""SI""",%objcsd(%qHandle,3)=1 }
+ 	else { s SQLCODE=-114,%msg="Unable to acquire shared lock on table MDG.Request for RowID value: "_%objcsd(%qHandle,6) ztrap "LOCK"  }
+ }
+ ; asl MOD# 3
+ d:%objcsd(%qHandle,5)=3 ##class(%SYS.PTools.SQLStats).Start("MDGDEV",$zn,"QExtent0",3)
+ i %objcsd(%qHandle,6)'="",$d(^MDG.RequestD(%objcsd(%qHandle,6)))
+ e  g %0FmCdun
+%0FmBuncommitted ;
+ d:%objcsd(%qHandle,5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"QExtent0","3,2,1")
+ s:$g(SQLCODE)'<0 SQLCODE=0 s %objcsd(%qHandle,1)=%objcsd(%qHandle,1)+1,%ROWCOUNT=%objcsd(%qHandle,1),%ROWID=%objcsd(%qHandle,6),%objcsc(%qHandle)=10 q
+%QExtent0f i '$g(%objcsc(%qHandle)) { s SQLCODE=-102 q  } i %objcsc(%qHandle)=100 { s SQLCODE=100 q  } s SQLCODE=0
+ s $zt="%0Ferr"
+ i $d(%objcsd(%qHandle,2))#2,$g(%objcsd(%qHandle,1))'<%objcsd(%qHandle,2) { s SQLCODE=100,%ROWCOUNT=%objcsd(%qHandle,1),%objcsc(%qHandle)=100 q }
+ g %0Ffirst:%objcsc(%qHandle)=1
+ d:%objcsd(%qHandle,5)=3 ##class(%SYS.PTools.SQLStats).Start("MDGDEV",$zn,"QExtent0","3,2,1")
+%0FmCdun if $zu(115,2)=1 { if $g(%objcsd(%qHandle,3))=1 { l -@%objcsd(%qHandle,4) s %objcsd(%qHandle,3)=0 } elseif $g(%objcsd(%qHandle,3))=2 { do $classmethod($li(%objcsd(%qHandle,4)),"%UnlockId",$li(%objcsd(%qHandle,4),2),1,1)  s %objcsd(%qHandle,3)=0 } }
+ d:%objcsd(%qHandle,5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"QExtent0",3)
+ g %0FmBk1
+%0FmBdun d:%objcsd(%qHandle,5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"QExtent0",2)
+%0FmAdun 
+ s %ROWCOUNT=%objcsd(%qHandle,1),SQLCODE=100,%objcsc(%qHandle)=100 q
+%QExtent0c i '$g(%objcsc(%qHandle)) { s SQLCODE=-102 q  }
+ s %ROWCOUNT=$s($g(SQLCODE)'<0:+$g(%objcsd(%qHandle,1)),1:0)
+ d:$g(%objcsd(%qHandle,5))>1 ##class(%SYS.PTools.SQLStats).Report("MDGDEV",$zn,"QExtent0",%ROWCOUNT)
+ if $zu(115,2)=1 { if $g(%objcsd(%qHandle,3))=1 { l -@%objcsd(%qHandle,4) } elseif $g(%objcsd(%qHandle,3))=2 { do $classmethod($li(%objcsd(%qHandle,4)),"%UnlockId",$li(%objcsd(%qHandle,4),2),1,1)  } }
+ k %objcsd(%qHandle),%objcsc(%qHandle) s SQLCODE=0 q
+%0Ferr s $zt="" d SQLRunTimeError^%apiSQL($ze,.SQLCODE,.%msg)
+ s %objcsc(%qHandle)=100 q
+%0Jo d %QExtent0f q:SQLCODE'=0
+ s c1=%objcsd(%qHandle,6)
+ q
+%0Ko d %QExtent0f q:SQLCODE'=0
+ s c1=%objcsd(%qHandle,6)
+ q
+zExtentFunc() public {
+	try {
+		set tSchemaPath = ##class(%SQL.Statement).%ClassPath($classname())
+			set tStatement = ##class(%SQL.Statement).%New(,tSchemaPath)
+			do tStatement.prepare(" SELECT ID FROM MDG . Request")
+		set tResult = tStatement.%Execute()
+	}
+	catch tException { if '$Isobject($Get(tResult)) { set tResult = ##class(%SQL.StatementResult).%New() } set tResult.%SQLCODE=tException.AsSQLCODE(),tResult.%Message=tException.AsSQLMessage() }
+	Quit tResult }
+zExtentGetInfo(colinfo,parminfo,idinfo,%qHandle,extoption=0,extinfo) public {
+ s parminfo=""
+	s:'($d(^oddCOM($classname(),"q","Extent",21),clientinfo)#2)&&'$s($d(^(2),clientinfo)#2&&(clientinfo'=$classname()):$d(^oddCOM(clientinfo,"q","Extent",21),clientinfo)#2||($d(^oddDEF(clientinfo,"q","Extent",21),clientinfo)#2),1:$d(^oddDEF($classname(),"q","Extent",21),clientinfo)#2) clientinfo=""
+	Set:extoption extinfo=$s($d(^oddCOM($classname(),"q","Extent",38))#2:^(38),$d(^oddCOM($g(^(2),$classname()),"q","Extent",38))#2:^(38),1:$s($d(^oddDEF($g(^oddCOM($classname(),"q","Extent",2),$classname()),"q","Extent",38))#2:^(38),1:""))
+	If clientinfo'="" Set colinfo=$listget(clientinfo,1),parminfo=$listget(clientinfo,2),idinfo=$listget(clientinfo,3) Quit 1
+	Set colinfo="",parminfo="",idinfo=$listbuild(0)
+	Set sc=$$externaltype^%apiOLE("%Library.Integer",.exttypes,"0")
+	Quit:('sc) sc
+	s:'($d(^oddCOM($classname(),"q","Extent",23),names)#2)&&'$s($d(^(2),names)#2&&(names'=$classname()):$d(^oddCOM(names,"q","Extent",23),names)#2||($d(^oddDEF(names,"q","Extent",23),names)#2),1:$d(^oddDEF($classname(),"q","Extent",23),names)#2) names=""
+	s:'($d(^oddCOM($classname(),"q","Extent",22),captions)#2)&&'$s($d(^(2),captions)#2&&(captions'=$classname()):$d(^oddCOM(captions,"q","Extent",22),captions)#2||($d(^oddDEF(captions,"q","Extent",22),captions)#2),1:$d(^oddDEF($classname(),"q","Extent",22),captions)#2) captions=""
+	For i=1:1:1 Set colinfo=colinfo_$listbuild($listbuild($listget(names,i),$piece(exttypes,",",i),$listget(captions,i)))
+	Set idinfo=$listbuild(1,$classname())
+	s ^oddCOM($classname(),"q","Extent",21)=$listbuild(colinfo,parminfo,idinfo)
+	Quit 1 }
+zExtentGetODBCInfo(colinfo,parminfo,qHandle) public {
+	set version = $Select($Get(%protocol,41)>40:4,1:3)
+	Set metadata=$lb(1,1,"ID",4,10,0,2,"ID","Request","MDG","",$c(0,0,0,0,0,0,0,0,0,0,0,1),0)
+	Set colcount=$li(metadata,2),cmdlen=colcount*10,parmcount=$li(metadata,3+cmdlen),pmdlen=parmcount*6,parminfo=$li(metadata,cmdlen+3,cmdlen+pmdlen+3)
+	If version=4 {
+		Set colinfo=$li(metadata,2,2+cmdlen)
+	} Else {
+		Set colinfo=$li(metadata,2,2)
+		For i=0:1:colcount-1 Set colinfo=colinfo_$list(metadata,3+(i*10),11+(i*10))
+	}
+	Quit 1 }
+zExtentSendODBC(qHandle,array,qacn,%qrc,piece,ColumnCount) public {
+	Kill array(qacn) Set %qrc=0
+SPInnerLoop	Set rc=..ExtentFetch(.qHandle,.row,.atend)
+	If ('rc) { Set %qrc=-400 Set:$isobject($get(%sqlcontext)) %sqlcontext.SQLCode=-400,%sqlcontext.Message=$g(%msg) Do ProcessError^%ourProcedure(rc,$get(%sqlcontext),.%qrc,.%msg) Do Logerr^%SYS.SQLSRV(%qrc,"","SP",.%msg) Set piece=0 Quit }
+	If row="" Set %qrc=100,piece=0 Set:$isobject($get(%sqlcontext)) %sqlcontext.SQLCode=100 Quit 1
+	If $get(%protocol)>46 { For piece=1:1:ColumnCount { Goto:$zobjexport($listget(row,piece),50) SPDone } }
+	Else { For piece=1:1:ColumnCount { Goto:$zobjexport($listget(row,piece),7) SPDone } }
+	Goto SPInnerLoop
+SPDone	Set:$g(%protocol)>46 piece=piece+1 For i=piece:1:ColumnCount { Set array(qacn,i)=$listget(row,i) }
+	Quit }
+zIDKEYCheck(K1,lockonly=0,concurrency=-1) public {
+	s id=K1,exists=..%ExistsId(id) q:'exists $s('lockonly:$$Error^%apiOBJ(5797,$classname(),"IDKEY",id),1:1) s:concurrency=-1 concurrency=$select(..#DEFAULTCONCURRENCY="$zu(115,10)":$zu(115,10),1:$xecute("q "_..#DEFAULTCONCURRENCY)) if concurrency { s status=..%LockId(id,1) q:('status) status } if 'lockonly { s exists=..%ExistsId(id) d:concurrency ..%UnlockId(id,1,0) quit $s('exists:$$Error^%apiOBJ(5797,$classname(),"IDKEY",id),1:1) } else { d:concurrency ..%UnlockId(id,1,0) q 1 }
+}
+zIDKEYDelete(K1,concurrency=-1) public {
+	Quit ..%DeleteId(.K1,concurrency) }
+zIDKEYExists(K1,id="")
+	s id=K1 q ..%ExistsId(K1)
+	Quit
+zIDKEYOpen(K1,concurrency=-1,sc) public { Set:'($data(sc)#2) sc=1
+	Quit ..%OpenId(.K1,concurrency,.sc) }
+zIDKEYSQLCheckUnique(pFromOrig=0,%pID,%pVals...)
+ QUIT $$Error^%apiOBJ(5758,"%Persistent::IDKEYSQLCheckUnique")
+zIDKEYSQLExists(pLockOnly=0,pUnlockRef,%pVal...)
+	// SQL Foreign Key validation entry point for Key IDKEY.  Called by FKeys that reference this Key to see if the row is defined
+	new id set id=%pVal(1)
+	if pLockOnly>=0 { if '..%SQLGetLock(id,1,.pUnlockRef) { set sqlcode=-114,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler39",,"MDG"_"."_"Request"_":"_"IDKEY") QUIT 0 } }
+	if pLockOnly<1 {
+		new qv set qv=$d(^MDG.RequestD(%pVal(1))) QUIT:pLockOnly=-1 qv
+		do:'$g(pUnlockRef) ..%SQLReleaseLock(id,1) quit qv
+	}
+	else { do:'$g(pUnlockRef) ..%SQLReleaseLock(id,1) QUIT 1 }
+	Quit
+zIDKEYSQLFindPKeyByConstraint(%con)
+ QUIT $$Error^%apiOBJ(5758,"%Persistent::IDKEYSQLFindPKeyByConstraint")
+zIDKEYSQLFindRowIDByConstraint(%con,pInternal=0)
+ QUIT $$Error^%apiOBJ(5758,"%Persistent::IDKEYSQLFindRowIDByConstraint")

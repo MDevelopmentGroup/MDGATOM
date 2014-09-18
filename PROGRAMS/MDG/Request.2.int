@@ -1,0 +1,50 @@
+ ;MDG.Request.2
+ ;(C)InterSystems, generated for class MDG.Request.  Do NOT edit. 09/18/2014 02:23:59PM
+ ;;7670737A;MDG.Request
+ ;
+SQLUPPER(v,l) { quit $zu(28,v,7,$g(l,32767)) }
+ALPHAUP(v,r) { quit $zu(28,v,6) }
+STRING(v,l) { quit $zu(28,v,9,$g(l,32767)) }
+SQLSTRING(v,l) { quit $zu(28,v,8,$g(l,32767)) }
+UPPER(v) { quit $zu(28,v,5) }
+MVR(v) { quit $zu(28,v,2) }
+TRUNCATE(v,l) { quit $e(v,1,$g(l,3641144)) }
+ /*  ; Revision: $Id: //dev/2014.2.x/databases/sys/inc/_sySystem.inc#1 $ ($Change: 1637798 $)  */
+zROUTINE(namespace,Path) public {
+	Set st=1
+    set Path=Path_"/PROGRAMS"
+    set File=##class(%Library.File).%New()
+    do File.CreateDirectory(Path)
+    set routine=##class(%Library.ResultSet).%New("%Library.Routine:RoutineList")
+    set status=routine.Execute("",1,"INT",namespace)
+    while routine.Next() {
+        set ns=$namespace
+        set $namespace=namespace
+        set temp=##class(%Library.Routine).%OpenId(routine.Get("Name"))
+        set $namespace=ns
+        set tempPath=Path_"/"
+        set type=$E(routine.Get("Name"),$LENGTH(routine.Get("Name"))-2,*)
+        set file=##class(%Stream.FileBinary).%New()
+        if (type="BAS"){
+	set file.Filename=tempPath_routine.Get("Name")
+        	set status=file.CopyFrom(temp)
+        	set status=file.%Save()
+	}
+        if (type="MAC"){
+	set file.Filename=tempPath_routine.Get("Name")
+        	set status=file.CopyFrom(temp)
+        	set status=file.%Save()
+	        }
+        if (type="INT"){
+	              set List=$ListFromString(routine.Get("Name"),".")
+        for i=1:1:$ListLength(List)-3 {
+            set tempPath=tempPath_$List(List,i)_"/"
+            do File.CreateDirectory(tempPath)
+        }
+        set file.Filename=tempPath_$List(List,$ListLength(List)-2)_"."_$List(List,$ListLength(List)-1)_"."_$ZConvert($List(List,$ListLength(List)),"L")
+        set status=file.CopyFrom(temp)
+        set status=file.%Save()
+        kill file
+	}
+    }
+    quit status }

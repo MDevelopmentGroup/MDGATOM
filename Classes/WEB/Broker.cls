@@ -16,6 +16,9 @@ XData UrlMap
     <Route Url="/createproperty" Method="POST" Call="MDG.Request:CreateProperty" />
     <Route Url="/getparameter" Method="POST" Call="MDG.Request:GetParameters"/>
     <Route Url="/getpath" Method="POST" Call="MDG.Request:GetPath"/>
+    <Route Url="/refresh" Method="POST" Call="MDG.Request:Refresh"/>
+    <Route Url="/saveall" Method="POST" Call="MDG.Request:SaveAll"/>
+    <Route Url="/compileall" Method="POST" Call="MDG.Request:CompileAll"/>
     
 </Routes>
 }

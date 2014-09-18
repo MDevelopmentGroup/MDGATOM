@@ -1,0 +1,20 @@
+ ;WEB.Broker.1
+ ;(C)InterSystems, generated for class WEB.Broker.  Do NOT edit. 09/17/2014 08:41:30PM
+ ;;2B396845;WEB.Broker
+ ;
+zDispatchMap(pIndex) public {
+ If pIndex=1 Quit $ListBuild("/namespaces","POST","MDG.Request:GetNamespaces")
+ If pIndex=2 Quit $ListBuild("/namespaces/classlist","POST","MDG.Request:GetClassList")
+ If pIndex=3 Quit $ListBuild("/namespaces/classname","POST","MDG.Request:GetClass")
+ If pIndex=4 Quit $ListBuild("/updateclass","POST","MDG.Request:UpdateClass")
+ If pIndex=5 Quit $ListBuild("/createclass","POST","MDG.Request:CreateClass")
+ If pIndex=6 Quit $ListBuild("/compilationclass","POST","MDG.Request:CompilationClass")
+ If pIndex=7 Quit $ListBuild("/deleteclass","POST","MDG.Request:DeleteClass")
+ If pIndex=8 Quit $ListBuild("/createmethod","POST","MDG.Request:CreateMethod")
+ If pIndex=9 Quit $ListBuild("/createproperty","POST","MDG.Request:CreateProperty")
+ If pIndex=10 Quit $ListBuild("/getparameter","POST","MDG.Request:GetParameters")
+ If pIndex=11 Quit $ListBuild("/getpath","POST","MDG.Request:GetPath")
+ If pIndex=12 Quit $ListBuild("/refresh","POST","MDG.Request:Refresh")
+ If pIndex=13 Quit $ListBuild("/saveall","POST","MDG.Request:SaveAll")
+ If pIndex=14 Quit $ListBuild("/compileall","POST","MDG.Request:CompileAll")
+ Quit "" }
