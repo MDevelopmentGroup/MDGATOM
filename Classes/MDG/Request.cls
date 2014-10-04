@@ -560,4 +560,3 @@ ClassMethod FileList(Dir, ByRef list As %ListOfDataTypes) As %Status
 <Type>%Library.CacheStorage</Type>
 </Storage>
 }
-

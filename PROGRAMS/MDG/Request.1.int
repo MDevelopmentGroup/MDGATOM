@@ -16,11 +16,11 @@ TRUNCATE(v,l) { quit $e(v,1,$g(l,3641144)) }
 	QUIT 1 }
 %CheckConstraints(pID,pConstraintList="",pCheckDisabled=0,pErrorInfo) public {
 	if (''..%OnDetermineClass($select(pID="":"",1:$listbuild(pID_"")),.tMSTC)) && (tMSTC '= $classname()) { quit $classmethod(tMSTC,"%CheckConstraints",pID,pConstraintList) } else { quit 1 } }
-%CheckConstraintsForExtent(pConstraintList="",pCheckDisabled=0,pErrorLog) [ SQLCODE,tID ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,tID 
+%CheckConstraintsForExtent(pConstraintList="",pCheckDisabled=0,pErrorLog) [ SQLCODE,tID ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,tID
 	kill pErrorLog set tStatusAll = 1, pErrorLog = 0 if '$listvalid(pConstraintList) { set pConstraintList = $listfromstring(pConstraintList) }
 	 ;---&sql(declare ext cursor for select %ID into :tID FROM MDG.Request)
  	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE, tID
-	
+
 	 ;---&sql(open ext)
  	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
 	Do %ext0o
@@ -39,16 +39,16 @@ TRUNCATE(v,l) { quit $e(v,1,$g(l,3641144)) }
 	}
 	quit tStatusAll }
  q
-%ext0o 
+%ext0o
  s $zt="%ext0E" s SQLCODE=$s($g(%ext01273c):-101,1:0) q:SQLCODE'=0  s %ext01273d(1)=0 set:$d(%0CacheRowLimit)#2 %ext01273d(2)=%0CacheRowLimit s %ext01273d(3)=0,%ext01273d(4)="" d:$zu(115,15) $system.ECP.Sync()
  s %ext01273d(5)=$S($zu(115,12)=-1:0,$zu(115,12)>0:$zu(115,12),1:$zu(35,4))
- if %ext01273d(5)>1 { 
+ if %ext01273d(5)>1 {
       new StatsParams set StatsParams=0
       do ##class(%SYS.PTools.SQLStats).Init("MDGDEV",$zn,"ext0",.StatsParams)
   }
  s %ext01273c=1,SQLCODE=0 q
 %ext0E s $zt="" d SQLRunTimeError^%apiSQL($ze,.SQLCODE,.%msg) k %ext01273c,%ext01273d,%ext01273E,%ext01273l,%ext01273n,%ext01273R,%ext01273Z,%mmmsqlEOO q
-%0Afirst 
+%0Afirst
  ; asl MOD# 2
  d:%ext01273d(5)=3 ##class(%SYS.PTools.SQLStats).Start("MDGDEV",$zn,"ext0",2)
  s tID=""
@@ -76,7 +76,7 @@ TRUNCATE(v,l) { quit $e(v,1,$g(l,3641144)) }
  d:%ext01273d(5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"ext0",3)
  g %0AmBk1
 %0AmBdun d:%ext01273d(5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"ext0",2)
-%0AmAdun 
+%0AmAdun
  s %ROWCOUNT=%ext01273d(1),SQLCODE=100,%ext01273c=100 q
 %ext0c i '$g(%ext01273c) { s SQLCODE=-102 q  }
  s %ROWCOUNT=$s($g(SQLCODE)'<0:+$g(%ext01273d(1)),1:0)
@@ -155,7 +155,7 @@ DeleteDataERR	Set $Ztrap = "DeleteDataRET"
 	Set sc=""
 	If ..%Concurrency=4 Lock +(^MDG.RequestD(id)):$zu(115,4) If '$test QUIT $$Error^%apiOBJ(5803,$classname())
 	If ..%Concurrency'=4,..%Concurrency>1 Lock +(^MDG.RequestD(id)#"S"):$zu(115,4) If '$test QUIT $$Error^%apiOBJ(5804,$classname())
-	i '$d(^MDG.RequestD(id)) 
+	i '$d(^MDG.RequestD(id))
 	Else  Do
 	. New %s1
 	. Set sc=1
@@ -165,7 +165,7 @@ DeleteDataERR	Set $Ztrap = "DeleteDataRET"
 %LoadDataFromMemory(id,objstate,obj)
 	New sc
 	Set sc=""
-	i '$d(objstate(id)) 
+	i '$d(objstate(id))
 	Else  Do
 	. New %s1
 	. Set sc=1
@@ -230,9 +230,9 @@ DeleteDataERR	Set $Ztrap = "DeleteDataRET"
 	set $zt="ERRORDelete"
 	do ..%SQLGetOld(%rowid,.%d,.%e,.sqlcode) if sqlcode { set SQLCODE=-106 do ..%SQLEExit() QUIT  }
 	if %e(2)'="" { set sn=$p(%e(2),$e(%e(2)),$l(%e(2),$e(%e(2)))-1) if "MDG.Request"'=sn { new %f do ..%SQLCopyIcolIntoName() do $classmethod(sn,"%SQLDelete",%rowid,%check,%tstart,%mv,1) QUIT  }}
-	if '$a(%check),'$zu(115,7) do  if sqlcode set SQLCODE=sqlcode do ..%SQLEExit() QUIT  
+	if '$a(%check),'$zu(115,7) do  if sqlcode set SQLCODE=sqlcode do ..%SQLEExit() QUIT
 	. new %fk,%k,%p,%st,%t,%z set %k="",%p("%1")="%d(1),",%p("IDKEY")="%d(1),"
-	. for  quit:sqlcode<0  set %k=$o(^oddEXTR("MDG.Request","n",%k)) quit:%k=""  set %t="" for  set %t=$o(^oddEXTR("MDG.Request","n",%k,"f",%t)) quit:%t=""  set %st=(%t="MDG.Request") set %fk="" for  set %fk=$order(^oddEXTR("MDG.Request","n",%k,"f",%t,%fk)) quit:%fk=""  x "set %z=$classmethod(%t,%fk_""SQLFKeyRefAction"",%st,%k,$a(%check,2),"_%p(%k)_")" if %z set sqlcode=-124 quit  
+	. for  quit:sqlcode<0  set %k=$o(^oddEXTR("MDG.Request","n",%k)) quit:%k=""  set %t="" for  set %t=$o(^oddEXTR("MDG.Request","n",%k,"f",%t)) quit:%t=""  set %st=(%t="MDG.Request") set %fk="" for  set %fk=$order(^oddEXTR("MDG.Request","n",%k,"f",%t,%fk)) quit:%fk=""  x "set %z=$classmethod(%t,%fk_""SQLFKeyRefAction"",%st,%k,$a(%check,2),"_%p(%k)_")" if %z set sqlcode=-124 quit
 	set ce="" for  { set ce=$order(^oddSQL("MDG","Request","DC",ce)) quit:ce=""   do $classmethod(ce,"%SQLDeleteChildren",%d(1),%check,.sqlcode) quit:sqlcode<0  } if sqlcode<0 { set SQLCODE=sqlcode do ..%SQLEExit() QUIT } // Delete any children
 	if '$a(%check,3) {
 	}
@@ -246,8 +246,8 @@ ERRORDelete	set $zt="",SQLCODE=-415,%msg=$s($g(%msg)'="":%msg_" -- ",1:"")_$$For
 	// Delete all temporary streams
 	QUIT
 %SQLEExit()
-	do ..%SQLUnlock() 
-	if %tstart,$zu(115,1)=1,$TLEVEL { set %tstart=0 TROLLBACK 1 } kill:$g(omcall) %0CacheSQLRA QUIT  
+	do ..%SQLUnlock()
+	if %tstart,$zu(115,1)=1,$TLEVEL { set %tstart=0 TROLLBACK 1 } kill:$g(omcall) %0CacheSQLRA QUIT
 	Quit
 %SQLExists(pLockOnly=0,pUnlockRef,%pVal...)
 	// SQL Foreign Key validation entry point for Key %1.  Called by FKeys that reference this Key to see if the row is defined
@@ -272,7 +272,7 @@ ERRORDelete	set $zt="",SQLCODE=-415,%msg=$s($g(%msg)'="":%msg_" -- ",1:"")_$$For
 %SQLInsert(%d,%check,%inssel,%vco,%tstart=1,%mv=0)
 	new bva,%ele,%itm,%key,%l,%n,%nc,%oper,%pos,%s,sqlcode,sn,subs,icol set %oper="INSERT",sqlcode=0,%l=$c(0,0,0)
 	if $a(%check,7) { new %diu merge %diu=%d }
-	if $d(%d(1)),'$zu(115,11) { if %d(1)'="" { set SQLCODE=-111,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler6",,"ID","MDG"_"."_"Request") QUIT ""  } kill %d(1) } 
+	if $d(%d(1)),'$zu(115,11) { if %d(1)'="" { set SQLCODE=-111,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler6",,"ID","MDG"_"."_"Request") QUIT ""  } kill %d(1) }
 	do ..%SQLNormalizeFields()
 	if %tstart { TSTART:($zu(115,1)=1)||('$TLEVEL&&($zu(115,1)=2))  } set $zt="ERRORInsert"
 	if '$a(%check) {
@@ -318,7 +318,7 @@ ERRORInsert	set $zt="",SQLCODE=-415,%msg=$s($g(%msg)'="":%msg_" -- ",1:"")_$$For
 	set x=$zobjexport(-1,18),%qrc=400,%msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler44",,"MDG"_"."_"Request") QUIT
 %SQLQuickBulkUpdate(%nolock=0)
 	// Update multiple new rows with values %qd(icol)
-	new c,call,nc,nr,%qd,r,x set:%nolock=2 %nolock=0 set nr=$zobjexport(12) for r=1:1:nr { set %rowid=$zobjexport(12),nc=$zobjexport(12) kill %qd for c=1:1:nc { set:$zobjexport(17) %qd(c+1)=$zobjexport(12) } do ..%SQLQuickUpdate(%rowid,.%qd,%nolock) set x=$zobjexport($s(%qrc:-1,1:%ROWID),18) quit:%qrc  } QUIT  
+	new c,call,nc,nr,%qd,r,x set:%nolock=2 %nolock=0 set nr=$zobjexport(12) for r=1:1:nr { set %rowid=$zobjexport(12),nc=$zobjexport(12) kill %qd for c=1:1:nc { set:$zobjexport(17) %qd(c+1)=$zobjexport(12) } do ..%SQLQuickUpdate(%rowid,.%qd,%nolock) set x=$zobjexport($s(%qrc:-1,1:%ROWID),18) quit:%qrc  } QUIT
 %SQLQuickDelete(%rowid,%nolock=0,pkey=0)
 	// Delete row where SQLRowID=%rowid
 	set:%nolock=2 %nolock=0
@@ -391,7 +391,7 @@ ERRORInsert	set $zt="",SQLCODE=-415,%msg=$s($g(%msg)'="":%msg_" -- ",1:"")_$$For
 	do ..%SQLUnlock() TCOMMIT:%tstart&&($zu(115,1)=1)
 	set SQLCODE=0 kill:$g(omcall) %0CacheSQLRA
 	QUIT
-ERRORUpdate	set $zt="",SQLCODE=-415,%msg=$s($g(%msg)'="":%msg_" -- ",1:"")_$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler51",,%oper,"MDG"_"."_"Request",$ze) if $ze["<FRAMESTACK>" { set %msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler52",,$ze,%oper,"MDG"_"."_"Request") do ##Class(%SYS.System).WriteToConsoleLog(%msg) if ($zu(67,10,$j)=1)||($zu(67,10,$j)=3) { write !,%msg h 3 } HALT  } do ..%SQLEExit() QUIT  
+ERRORUpdate	set $zt="",SQLCODE=-415,%msg=$s($g(%msg)'="":%msg_" -- ",1:"")_$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler51",,%oper,"MDG"_"."_"Request",$ze) if $ze["<FRAMESTACK>" { set %msg=$$FormatMessage^%occMessages(,"%SQL.Filer","SQLFiler52",,$ze,%oper,"MDG"_"."_"Request") do ##Class(%SYS.System).WriteToConsoleLog(%msg) if ($zu(67,10,$j)=1)||($zu(67,10,$j)=3) { write !,%msg h 3 } HALT  } do ..%SQLEExit() QUIT
 	Quit
 %SQLValidateFields(sqlcode)
 	QUIT 'sqlcode
@@ -904,33 +904,33 @@ zWriteWebFiles(NS,Path) public {
     set status=File.CreateDirectory(Path)
     set status=File.CopyDir($get(csp("Path")),Path,1)
     quit status }
-zExtentExecute(%qHandle) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1 
+zExtentExecute(%qHandle) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1
 	Set sc=1
 	s %qHandle=$i(%objcn)
 	 ;---&sql(DECLARE QExtent CURSOR FOR
  	 ;---		 SELECT ID FROM MDG.Request)
  	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
-	
+
 	 ;---&sql(OPEN QExtent)
  	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
 	Do %QExtent0o
 	If SQLCODE { Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.%Message=$g(%msg) Set sc=$$Error^%apiOBJ(5821,"SQLCODE = "_SQLCODE) } Else { Set sc=1 }
 	Quit sc }
-zExtentClose(%qHandle) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1 
+zExtentClose(%qHandle) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1
 	 ;---&sql(CLOSE QExtent)
  	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE
 	Do %QExtent0c
 	If SQLCODE { Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.%Message=$g(%msg) Set sc=$$Error^%apiOBJ(5540,SQLCODE,$get(%msg)) } Else { Set sc=1 }
 	Kill %objcsc(%qHandle),%objcsp(%qHandle),%objcss(%qHandle),%objcst(%qHandle),%objcsl(%qHandle),%objcsR(%qHandle),%objcsZ(%qHandle),%objcsd(%qHandle)
 	Quit sc }
-zExtentFetch(%qHandle,Row,AtEnd=0) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1 
+zExtentFetch(%qHandle,Row,AtEnd=0) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1
 	Set Row="",AtEnd=0
 	 ;---&sql(FETCH QExtent INTO :c1)
  	 ;--- ** SQL PUBLIC Variables: %ROWCOUNT, %ROWID, %msg, SQLCODE, c1
 	Do %0Jo
 	If 'SQLCODE { Set Row=$lb(c1) Set sc=1 } ElseIf SQLCODE=100 { Set AtEnd=1,sc=1 Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.%ROWCOUNT=$g(%ROWCOUNT) } Else { Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.Message=$g(%msg) Set AtEnd=1,sc=$$Error^%apiOBJ(5540,SQLCODE,$get(%msg)) }
 	QUIT sc }
-zExtentFetchRows(%qHandle,FetchCount=0,RowSet,ReturnCount,AtEnd) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1 
+zExtentFetchRows(%qHandle,FetchCount=0,RowSet,ReturnCount,AtEnd) [ SQLCODE,c1 ] public { New %ROWCOUNT,%ROWID,%msg,SQLCODE,c1
 	Set RowSet="",ReturnCount=0,AtEnd=0
 	For {
 		 ;---&sql(FETCH QExtent INTO :c1)
@@ -941,16 +941,16 @@ zExtentFetchRows(%qHandle,FetchCount=0,RowSet,ReturnCount,AtEnd) [ SQLCODE,c1 ] 
 	If 'SQLCODE { Set sc=1 } ElseIf SQLCODE=100 { Set sc=1 Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.%ROWCOUNT=$g(%ROWCOUNT) } Else { Set:$isobject($g(%sqlcontext)) %sqlcontext.%SQLCODE=SQLCODE,%sqlcontext.Message=$g(%msg) Set sc=$$Error^%apiOBJ(5540,SQLCODE,$get(%msg)) }
 	Quit sc }
  q
-%QExtent0o 
+%QExtent0o
  s $zt="%QExtent0E" s SQLCODE=$s($g(%objcsc(%qHandle)):-101,1:0) q:SQLCODE'=0  s %objcsd(%qHandle,1)=0 set:$d(%0CacheRowLimit)#2 %objcsd(%qHandle,2)=%0CacheRowLimit s %objcsd(%qHandle,3)=0,%objcsd(%qHandle,4)="" d:$zu(115,15) $system.ECP.Sync()
  s %objcsd(%qHandle,5)=$S($zu(115,12)=-1:0,$zu(115,12)>0:$zu(115,12),1:$zu(35,4))
- if %objcsd(%qHandle,5)>1 { 
+ if %objcsd(%qHandle,5)>1 {
       new StatsParams set StatsParams=0
       do ##class(%SYS.PTools.SQLStats).Init("MDGDEV",$zn,"QExtent0",.StatsParams)
   }
  s %objcsc(%qHandle)=1,SQLCODE=0 q
 %QExtent0E s $zt="" d SQLRunTimeError^%apiSQL($ze,.SQLCODE,.%msg) k %objcsd(%qHandle),%objcsc(%qHandle),%objcss(%qHandle),%objcst(%qHandle),%objcsp(%qHandle) q
-%0Ffirst 
+%0Ffirst
  ; asl MOD# 2
  d:%objcsd(%qHandle,5)=3 ##class(%SYS.PTools.SQLStats).Start("MDGDEV",$zn,"QExtent0",2)
  s %objcsd(%qHandle,6)=""
@@ -978,7 +978,7 @@ zExtentFetchRows(%qHandle,FetchCount=0,RowSet,ReturnCount,AtEnd) [ SQLCODE,c1 ] 
  d:%objcsd(%qHandle,5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"QExtent0",3)
  g %0FmBk1
 %0FmBdun d:%objcsd(%qHandle,5)=3 ##class(%SYS.PTools.SQLStats).Stop("MDGDEV",$zn,"QExtent0",2)
-%0FmAdun 
+%0FmAdun
  s %ROWCOUNT=%objcsd(%qHandle,1),SQLCODE=100,%objcsc(%qHandle)=100 q
 %QExtent0c i '$g(%objcsc(%qHandle)) { s SQLCODE=-102 q  }
  s %ROWCOUNT=$s($g(SQLCODE)'<0:+$g(%objcsd(%qHandle,1)),1:0)
